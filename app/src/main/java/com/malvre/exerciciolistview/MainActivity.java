@@ -1,11 +1,9 @@
 package com.malvre.exerciciolistview;
 
 import android.content.ContentValues;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -13,7 +11,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.malvre.exerciciolistview.adapters.ItemAdapter;
+import com.malvre.exerciciolistview.adapters.ContatoAdapter;
 import com.malvre.exerciciolistview.utils.DB;
 import com.malvre.exerciciolistview.utils.Dialogs;
 import com.malvre.exerciciolistview.utils.ErrorHandler;
@@ -24,12 +22,12 @@ public class MainActivity extends AppCompatActivity {
 
 	private static String TAG = MainActivity.class.getSimpleName();
 
-	EditText editItem;
+	EditText editNome, editTelefone;
 	Button btnAdicionar;
 	ListView listview;
 	TextView emptyView;
-	ArrayList<ContentValues> itens;
-	ItemAdapter adapter;
+	ArrayList<ContentValues> contatos;
+	ContatoAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
 	private void initView() {
 		emptyView = (TextView) findViewById(R.id.empty);
-		editItem = (EditText) findViewById(R.id.editItem);
+		editNome = (EditText) findViewById(R.id.editNome);
+		editTelefone = (EditText) findViewById(R.id.editTelefone);
+
 		listview = (ListView) findViewById(R.id.listView);
 		btnAdicionar = (Button) findViewById(R.id.btnAdicionar);
 	}
@@ -59,38 +59,44 @@ public class MainActivity extends AppCompatActivity {
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				long itemID = itens.get(position).getAsLong("_id");
+				long itemID = contatos.get(position).getAsLong("_id");
 				deleteItem(itemID);
 			}
 		});
 	}
 
 	private void initData() {
-		itens = DB.selectRows(this, "SELECT * FROM itens ORDER BY _id DESC LIMIT 300", null);
-		adapter = new ItemAdapter(this, itens);
+		contatos = DB.selectRows(this, "SELECT * FROM contatos ORDER BY nome ASC LIMIT 300", null);
+		adapter = new ContatoAdapter(this, contatos);
 		listview.setAdapter(adapter);
 		listview.setEmptyView(emptyView);
 	}
 
 	private void adicionaItem() {
-		String item = editItem.getText().toString();
+		String nome = editNome.getText().toString();
+		String telefone = editTelefone.getText().toString();
 
 		ErrorHandler error = new ErrorHandler();
-		if (TextUtils.isEmpty(editItem.getText())) {
-			error.add("Informe um item");
+		if (TextUtils.isEmpty(editNome.getText())) {
+			error.add("Informe o nome");
+		}
+		if (TextUtils.isEmpty(editTelefone.getText())) {
+			error.add("Informe o telefone");
 		}
 
 		if (error.hasError()) {
 			Dialogs.error(this, error.getMessage());
 		} else {
-			DB.executeSQL(this, "INSERT INTO itens (item) VALUES (?)", new String[]{item});
-			editItem.setText("");
+			DB.executeSQL(this, "INSERT INTO contatos (nome, telefone) VALUES (?, ?)", new String[]{nome, telefone});
+			editNome.setText("");
+			editTelefone.setText("");
+			editNome.requestFocus();
 			initData();
 		}
 	}
 
 	private void deleteItem(long itemID) {
-		DB.executeSQL(this, "DELETE FROM itens WHERE _id = ?", new String[]{String.valueOf(itemID)});
+		DB.executeSQL(this, "DELETE FROM contatos WHERE _id = ?", new String[]{String.valueOf(itemID)});
 		Dialogs.toast(this, "Item excluído");
 		initData();
 	}

@@ -13,18 +13,19 @@ import com.malvre.exerciciolistview.R;
 
 import java.util.List;
 
-public class ItemAdapter extends ArrayAdapter<ContentValues> {
+public class ContatoAdapter extends ArrayAdapter<ContentValues> {
 	private static class ViewHolder {
-		TextView listItem;
+		TextView nome;
+		TextView telefone;
 	}
 
-	public ItemAdapter(Context context, List<ContentValues> itens) {
+	public ContatoAdapter(Context context, List<ContentValues> itens) {
 		super(context, R.layout.row_item, itens);
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ContentValues item = getItem(position);
+		ContentValues contato = getItem(position);
 
 		ViewHolder viewHolder;
 		if (convertView == null) {
@@ -33,14 +34,16 @@ public class ItemAdapter extends ArrayAdapter<ContentValues> {
 			convertView = inflater.inflate(R.layout.row_item, parent, false);
 
 			viewHolder = new ViewHolder();
-			viewHolder.listItem = (TextView) convertView.findViewById(R.id.list_item);
+			viewHolder.nome = (TextView) convertView.findViewById(R.id.textNome);
+			viewHolder.telefone = (TextView) convertView.findViewById(R.id.textTelefone);
 
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 
-		viewHolder.listItem.setText(item.getAsString("item"));
+		viewHolder.nome.setText(contato.getAsString("nome"));
+		viewHolder.telefone.setText(contato.getAsString("telefone"));
 
 		return convertView;
 	}

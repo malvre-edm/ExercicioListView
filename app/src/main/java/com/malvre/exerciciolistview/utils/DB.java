@@ -15,7 +15,7 @@ public class DB extends SQLiteOpenHelper {
 	private static String TAG = DB.class.getSimpleName();
 	private static SQLiteDatabase mInstance = null;
 
-	public static final String CREATE_TABLE_BILLS = "CREATE TABLE itens (_id INTEGER PRIMARY KEY AUTOINCREMENT, item TEXT)";
+	public static final String CREATE_TABLE_CONTATOS = "CREATE TABLE contatos (_id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, telefone TEXT)";
 
 	public static SQLiteDatabase instance(Context ctx) {
 		if (mInstance == null)
@@ -30,7 +30,7 @@ public class DB extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		Log.d(TAG, "Criando o banco de dados");
-		db.execSQL(CREATE_TABLE_BILLS);
+		db.execSQL(CREATE_TABLE_CONTATOS);
 	}
 
 	@Override
